@@ -1,5 +1,37 @@
 apply plugin: 'com.android.application'
 
+def getVersionCodeFromGit = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-list', '--first-parent', '--count', 'master'
+            standardOutput = stdout
+        }
+        return Integer.parseInt(stdout.toString().trim())
+    }
+    catch (ignored) {
+        return -1;
+    }
+}
+
+/*
+ * Gets the version name from the latest Git tag
+ */
+def getVersionNameFromGit = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+def getFullVersionNameFromGit = { ->
+    def stdout = new ByteArrayOutputStream()
+    stdout = getVersionNameFromGit() + "-" + getVersionCodeFromGit()
+    return stdout.toString()
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
@@ -7,8 +39,8 @@ android {
         applicationId "com.tomohamat.apicem"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 4
-        versionName "0.2"
+        versionCode getVersionCodeFromGit()
+        versionName getVersionNameFromGit()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
