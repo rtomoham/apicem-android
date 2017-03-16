@@ -1,0 +1,58 @@
+<resources>
+    <string name="app_name">ApicEm</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <string name="button_get_users">Get Users</string>
+    <string name="button_get_network_devices">Get Devices</string>
+    <string name="button_get_hosts">Get Hosts</string>
+    <string name="button_get_legit_reads">Get Legit Reads</string>
+    <string name="button_test">Test</string>
+    <string name="button_device_details">Get device details</string>
+
+    <string name="apicem_not_initialized">Please configure settings first</string>
+
+    <!-- Strings related to settings -->
+    <string name="prompt_address">IP Address or DNS name</string>
+    <string name="prompt_protocol">Protocol</string>
+    <string name="prompt_port">Port</string>
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_save">Save</string>
+    <string name="button_https">https</string>
+    <string name="button_http">http</string>
+    <string name="port_https">443</string>
+    <string name="port_http">80</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+
+    <!-- Strings related to SharedPreferences -->
+    <string name="pref_identifier">ApicEm</string>
+    <string name="pref_revision">revision</string>
+    <string name="pref_protocol">protocol</string>
+    <string name="pref_port">port</string>
+    <string name="pref_address">address</string>
+    <string name="pref_username">username</string>
+    <string name="pref_password">password</string>
+    <string name="title_activity_main_tabbed">APIC-EM PoC</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- Strings in switch fragment -->
+    <string name="cli_runner_hint">show version</string>
+    <string name="button_cli_runner">run cli</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="version">version</string>
+
+    <string name="please_wait">Please wait</string>
+
+</resources>
