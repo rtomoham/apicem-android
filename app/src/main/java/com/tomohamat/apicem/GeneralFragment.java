@@ -1,5 +1,6 @@
 package com.tomohamat.apicem;
 
+import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -164,6 +165,30 @@ public class GeneralFragment extends ApicEmFragment {
         }
     }
 
+    public void showWaitForInitialization(final MainTabbedActivity activity, final int i) {
+        if (0 == i) {
+            progressDialog = ProgressDialog.show(this.getContext(), "",
+                    getString(R.string.wait_initializing0), true);
+        } else if (1 == i) {
+            progressDialog = ProgressDialog.show(this.getContext(), "",
+                    getString(R.string.wait_initializing1), true);
+        } else {
+            activity.startActivitySettings();
+        }
+        new Thread() {
+            public void run() {
+                try {
+                    // sleep the thread, whatever time you want.
+                    sleep(10 * 1000);
+                } catch (Exception e) {
+                    //
+                }
+                progressDialog.dismiss();
+                showWaitForInitialization(activity, i + 1);
+            }
+        }.start();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -178,6 +203,4 @@ public class GeneralFragment extends ApicEmFragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
 }

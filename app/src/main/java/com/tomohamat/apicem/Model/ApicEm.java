@@ -17,17 +17,7 @@ import java.util.Iterator;
  */
 public class ApicEm implements TaskDelegate {
 
-    public static final String URL_SUFFIX_TICKET = "/ticket";
-    public static final String URL_SUFFIX_TASK = "/task";
-    public static final String URL_SUFFIX_USER = "/user";
-    public static final String URL_SUFFIX_NETWORK_DEVICE = "/network-device";
-    public static final String URL_SUFFIX_HOST = "/host";
-    public static final String URL_SUFFIC_FLOW_ANALYSIS = "/flow-analysis";
-    public static final String URL_SUFFIC_LEGIT_READS = "/network-device-poller/cli/legit-reads";
-    public static final String URL_SUFFIX_READ = "/network-device-poller/cli/read-request";
-    public static final String URL_SUFFIX_FILE = "/file";
     public static final int REQUEST_TICKET = 1;
-    public static final int REQUEST_USERS = 2;
     public static final int REQUEST_NETWORK_DEVICES = 3;
 
     //	public static final int REST_CODE_TICKET = 1;
@@ -77,9 +67,6 @@ public class ApicEm implements TaskDelegate {
         this.username = username;
         this.password = password;
 
-        ticketUrl = getBaseUrlString() + URL_SUFFIX_TICKET;
-        taskUrl = getBaseUrlString() + URL_SUFFIX_TASK;
-        fileUrl = getBaseUrlString() + URL_SUFFIX_FILE;
     }
 
     /**
@@ -130,7 +117,7 @@ public class ApicEm implements TaskDelegate {
     }
 
     private void receiveFile() {
-        String response = RestClient.getResponse();
+        String response = restClient.getResponse();
 
         Log.d(TAG, "receiveFile: " + response);
 
@@ -212,7 +199,7 @@ public class ApicEm implements TaskDelegate {
     }
 
     private void receiveHosts() {
-        String response = RestClient.getResponse();
+        String response = restClient.getResponse();
 
         hosts = new ArrayList();
         try {
@@ -243,7 +230,7 @@ public class ApicEm implements TaskDelegate {
     }
 
     private void receiveLegitReads() {
-        String response = RestClient.getResponse();
+        String response = restClient.getResponse();
 
         Log.d(TAG, "receiveLegitReads: " + response);
 
@@ -270,19 +257,23 @@ public class ApicEm implements TaskDelegate {
     }
 
     private void receiveNetworkDevice() {
-        String response = RestClient.getResponse();
+        String response = restClient.getResponse();
         Log.d(TAG, "receiveNetworkDevice: " + response);
 
         try {
             JSONObject responseJson = new JSONObject(response);
-            JSONObject deviceObject = responseJson.getJSONObject("response");
-            String id = deviceObject.getString("id");
-            String serialNumber = deviceObject.getString("serialNumber");
-            String hostname = deviceObject.getString("hostname");
-            String family = deviceObject.getString("family");
-            String type = deviceObject.getString("type");
+            JSONArray responseArray = responseJson.getJSONArray("response");
+            NetworkDevice networkDevice = null;
+            for (int i = 0; i < responseArray.length(); i++) {
+                JSONObject deviceObject = (JSONObject) responseArray.get(i);
+                String id = deviceObject.getString("id");
+                String serialNumber = deviceObject.getString("serialNumber");
+                String hostname = deviceObject.getString("hostname");
+                String family = deviceObject.getString("family");
+                String type = deviceObject.getString("type");
 
-            NetworkDevice networkDevice = new NetworkDevice(id, serialNumber, hostname, family, type);
+                networkDevice = new NetworkDevice(id, serialNumber, hostname, family, type);
+            }
             activity.setNetworkDevice(networkDevice);
         } catch (JSONException e) {
             // TODO Auto-generated catch block
@@ -293,7 +284,7 @@ public class ApicEm implements TaskDelegate {
     }
 
     private void receiveNetworkDevices() {
-        String response = RestClient.getResponse();
+        String response = restClient.getResponse();
         networkDevices = new ArrayList();
 
         try {
@@ -327,6 +318,7 @@ public class ApicEm implements TaskDelegate {
     }
 
     private void receiveReadRequest() {
+/*
         request = REQUEST_TASK_COMPLETION;
         String response = RestClient.getResponse();
 
@@ -349,9 +341,11 @@ public class ApicEm implements TaskDelegate {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+*/
     }
 
     private void receiveTask() {
+/*
         String response = RestClient.getResponse();
         Log.d(TAG, "Task completed, response: " + response);
 
@@ -370,7 +364,7 @@ public class ApicEm implements TaskDelegate {
             String[] strings = new String[5];
 
             strings[0] = getBaseUrlString() + URL_SUFFIX_FILE;
-            strings[1] = RestClient.METHOD_AUTHENTICATED_GET;
+            strings[1] = RestClient.REQ_AUTHENTICATED_GET;
             strings[2] = REQUEST_FILE + "";
 //        strings[3] = authTicket;
             strings[4] = fileId;
@@ -378,25 +372,15 @@ public class ApicEm implements TaskDelegate {
             restClient = new RestClient(this, ticketUrl, taskUrl, fileUrl, username, password);
             restClient.execute(strings);
 
-/*
-            String[] strings = new String[5];
-
-            strings[0] = getBaseUrlString() + URL_SUFFIX_TASK;
-            strings[1] = RestClient.WAIT_FOR_TASK_COMPLETION;
-            strings[4] = taskId;
-
-            restClient = new RestClient(this, ticketUrl, taskUrl, username, password);
-            restClient.execute(strings);
-*/
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
+*/
     }
 
     private void receiveTicket() {
-        String response = RestClient.getResponse();
+        String response = restClient.getResponse();
 
         try {
             if (null != response) {
@@ -421,7 +405,7 @@ public class ApicEm implements TaskDelegate {
     }
 
     private void receiveUsers() {
-        String response = RestClient.getResponse();
+        String response = restClient.getResponse();
 
         users = new ArrayList();
         try {
@@ -456,7 +440,7 @@ public class ApicEm implements TaskDelegate {
     String[] strings = new String[5];
 
     strings[0] = getBaseUrlString() + URL_SUFFIX_HOST;
-    strings[1] = RestClient.METHOD_AUTHENTICATED_POST;
+    strings[1] = RestClient.REQ_AUTHENTICATED_POST;
     strings[2] = REQUEST_FLOW_ANALYSIS + "";
     strings[3] = authTicket;
     strings[4] = "{\"sourceIP\":" + sourceIp + "\"destIP\":\"" + destIp + "\"}";
@@ -470,19 +454,14 @@ public class ApicEm implements TaskDelegate {
      * Public method for View to request the flow analysis configured in ApicEm.
      */
     public void requestFlowAnalysis(String sourceIp, String destIp) {
-        request = REQUEST_FLOW_ANALYSIS;
-        this.sourceIp = sourceIp;
-        this.destIp = destIp;
+        request = RestClient.REQUEST_GET_FLOW_ANALYSIS;
 
-        String[] strings = new String[5];
+        String[] strings = new String[2];
+        strings[0] = sourceIp;
+        strings[1] = destIp;
 
-        strings[0] = getBaseUrlString() + URL_SUFFIX_HOST;
-        strings[1] = RestClient.METHOD_AUTHENTICATED_POST;
-        strings[2] = REQUEST_FLOW_ANALYSIS + "";
-//        strings[3] = authTicket;
-        strings[4] = "{\"sourceIP\":" + sourceIp + "\"destIP\":\"" + destIp + "\"}";
-
-        restClient = new RestClient(this, ticketUrl, taskUrl, fileUrl, username, password);
+        restClient = new RestClient(this, getBaseUrlString(), username, password);
+        restClient.setRequestCode(request);
         restClient.execute(strings);
     }
 
@@ -493,7 +472,7 @@ public class ApicEm implements TaskDelegate {
     String[] strings = new String[5];
 
     strings[0] = getBaseUrlString() + URL_SUFFIX_HOST;
-    strings[1] = RestClient.METHOD_AUTHENTICATED_GET;
+    strings[1] = RestClient.REQ_AUTHENTICATED_GET;
     strings[2] = REQUEST_HOSTS + "";
     strings[3] = authTicket;
 
@@ -506,16 +485,10 @@ public class ApicEm implements TaskDelegate {
      * Public method for View to request the hosts configured in ApicEm.
      */
     public void requestHosts() {
-        request = REQUEST_HOSTS;
-
-        String[] strings = new String[5];
-
-        strings[0] = getBaseUrlString() + URL_SUFFIX_HOST;
-        strings[1] = RestClient.METHOD_AUTHENTICATED_GET;
-        strings[2] = REQUEST_HOSTS + "";
-//        strings[3] = authTicket;
-
-        restClient = new RestClient(this, ticketUrl, taskUrl, fileUrl, username, password);
+        String[] strings = new String[0];
+        request = RestClient.REQUEST_GET_HOSTS;
+        restClient = new RestClient(this, getBaseUrlString(), username, password);
+        restClient.setRequestCode(request);
         restClient.execute(strings);
     }
 
@@ -523,17 +496,19 @@ public class ApicEm implements TaskDelegate {
      * Public method for View to request the legit reads in ApicEm.
      */
     public void requestLegitReads() {
+/*
         request = REQUEST_LEGIT_READS;
 
         String[] strings = new String[5];
 
         strings[0] = getBaseUrlString() + URL_SUFFIC_LEGIT_READS;
-        strings[1] = RestClient.METHOD_AUTHENTICATED_GET;
+        strings[1] = RestClient.REQ_AUTHENTICATED_GET;
         strings[2] = REQUEST_LEGIT_READS + "";
 //        strings[3] = authTicket;
 
         restClient = new RestClient(this, ticketUrl, taskUrl, fileUrl, username, password);
         restClient.execute(strings);
+*/
     }
 
     /**
@@ -541,16 +516,13 @@ public class ApicEm implements TaskDelegate {
      */
 
     public void requestNetworkDevice(String id) {
-        request = REQUEST_NETWORK_DEVICE;
+        request = RestClient.REQUEST_GET_NETWORK_DEVICE;
 
-        String[] strings = new String[5];
+        String[] strings = new String[1];
+        strings[0] = id;
 
-        strings[0] = getBaseUrlString() + URL_SUFFIX_NETWORK_DEVICE + "/" + id;
-        strings[1] = RestClient.METHOD_AUTHENTICATED_GET;
-        strings[2] = REQUEST_NETWORK_DEVICE + "";
-//        strings[3] = authTicket;
-
-        restClient = new RestClient(this, ticketUrl, taskUrl, fileUrl, username, password);
+        restClient = new RestClient(this, getBaseUrlString(), username, password);
+        restClient.setRequestCode(request);
         restClient.execute(strings);
     }
 
@@ -558,15 +530,10 @@ public class ApicEm implements TaskDelegate {
      * Public method for View to request the network devices configured in ApicEm.
      */
     public void requestNetworkDevices() {
-        request = REQUEST_NETWORK_DEVICES;
-
-        String[] strings = new String[5];
-
-        strings[0] = getBaseUrlString() + URL_SUFFIX_NETWORK_DEVICE;
-        strings[1] = RestClient.METHOD_AUTHENTICATED_GET;
-        strings[2] = REQUEST_NETWORK_DEVICES + "";
-
-        restClient = new RestClient(this, ticketUrl, taskUrl, fileUrl, username, password);
+        String[] strings = new String[0];
+        request = RestClient.REQUEST_GET_NETWORK_DEVICES;
+        restClient = new RestClient(this, getBaseUrlString(), username, password);
+        restClient.setRequestCode(request);
         restClient.execute(strings);
     }
 
@@ -574,85 +541,26 @@ public class ApicEm implements TaskDelegate {
      * Private method for ApicEm to make a REST call for the network devices.
      */
 
-    public void requestRead(String deviceId, String cli) {
-        request = REQUEST_READ;
+    public void requestCliRunner(String deviceId, String cli) {
+        String[] strings = new String[2];
+        strings[0] = deviceId;
+        strings[1] = cli;
 
-        String[] strings = new String[5];
-
-        strings[0] = getBaseUrlString() + URL_SUFFIX_READ;
-        strings[1] = RestClient.METHOD_AUTHENTICATED_POST;
-        strings[2] = REQUEST_READ + "";
-//        strings[3] = authTicket;
-
-//        String body = "{\"commands\":[\"ping\", \"8.8.8.8\"],\"deviceUuids\":[\"7d9ead63-d238-4e6b-bb7f-46e84e4a611e\"]}";
-        String body;
-        if ("".equals(cli)) {
-            body = "{\"commands\":[\"" + "show version" + "\"],\"deviceUuids\":[\"" + deviceId + "\"]}";
-        } else {
-            body = "{\"commands\":[\"" + cli + "\"],\"deviceUuids\":[\"" + deviceId + "\"]}";
-        }
-        strings[4] = body;
-
-        restClient = new RestClient(this, ticketUrl, taskUrl, fileUrl, username, password);
+        request = RestClient.REQUEST_CLI_RUNNER;
+        restClient = new RestClient(this, getBaseUrlString(), username, password);
+        restClient.setRequestCode(request);
         restClient.execute(strings);
-    }
-
-    /**
-     * Makes a REST POST call to obtain an authentication ticket.
-     * PRE: ApicEm is initialized.
-     */
-    private void requestTicket() {
-        request = REQUEST_TICKET;
-
-        restClient = new RestClient(this, ticketUrl, taskUrl, fileUrl, username, password);
-
-        String[] strings = new String[5];
-
-        strings[0] = getBaseUrlString() + URL_SUFFIX_TICKET;
-        strings[1] = RestClient.METHOD_POST;
-        strings[2] = REQUEST_TICKET + "";
-        strings[4] = "{\"username\" : \"" + this.username + "\", \"password\" : \"" + this.password + "\"}";
-
-        restClient.execute(strings);
-    }
-
-    public void testSettings() {
-        Log.d(TAG, "testSettings");
-        requestTicket();
     }
 
     /**
      * Public method for View to request the users configured in ApicEm.
      */
     public void requestUsers() {
-        request = REQUEST_USERS;
-
-        String[] strings = new String[5];
-
-        strings[0] = getBaseUrlString() + URL_SUFFIX_USER;
-        strings[1] = RestClient.METHOD_AUTHENTICATED_GET;
-        strings[2] = REQUEST_USERS + "";
-//        strings[3] = authTicket;
-
-        restClient = new RestClient(this, ticketUrl, taskUrl, fileUrl, username, password);
-        restClient.execute(strings);
+        request = RestClient.REQUEST_GET_USERS;
+        restClient = new RestClient(this, getBaseUrlString(), username, password);
+        restClient.setRequestCode(request);
+        restClient.execute();
     }
-
-    /**
-     * Private method for ApicEm to make a REST call for the users.
-     * @param authTicket valid authentication ticket, obtained through
-    private void requestUsers(String authTicket) {
-    String[] strings = new String[5];
-
-    strings[0] = getBaseUrlString() + URL_SUFFIX_USER;
-    strings[1] = RestClient.METHOD_AUTHENTICATED_GET;
-    strings[2] = REQUEST_USERS + "";
-    strings[3] = authTicket;
-
-    restClient = new RestClient(this, ticketUrl, taskUrl, username, password);
-    restClient.execute(strings);
-    }
-     */
 
     /**
      * Called when a RestClient has completed a REST call.
@@ -661,51 +569,85 @@ public class ApicEm implements TaskDelegate {
      */
     public void taskCompletionResult(int result) {
         Log.d(TAG, "request: " + request + " taskCompletionResult: " + result);
-        switch (request) {
-            case REQUEST_TICKET:
-                Log.d(TAG, "Ticket received for request " + request);
-                receiveTicket();
-                break;
-            case REQUEST_USERS:
-                Log.d(TAG, "Users received");
-                receiveUsers();
-                break;
-            case REQUEST_NETWORK_DEVICES:
-                Log.d(TAG, "Network devices received");
-                receiveNetworkDevices();
-                break;
-            case REQUEST_HOSTS:
-                Log.d(TAG, "Hosts received");
-                receiveHosts();
-                break;
-            case REQUEST_FLOW_ANALYSIS:
-                Log.d(TAG, "Flow analysis received");
-                receiveFlowAnalysis();
-                break;
-            case REQUEST_LEGIT_READS:
-                Log.d(TAG, "Legit reads received");
-                receiveLegitReads();
-                break;
-            case REQUEST_READ:
-                Log.d(TAG, "Read request received");
-                receiveReadRequest();
-                break;
-            case REQUEST_TASK_COMPLETION:
-                Log.d(TAG, "Task completed");
-                receiveTask();
-                break;
-            case REQUEST_FILE:
-                Log.d(TAG, "File request completed");
-                receiveFile();
-                break;
-            case REQUEST_NETWORK_DEVICE:
-                Log.d(TAG, "Network device request completed");
-                receiveNetworkDevice();
-                break;
+        if (RestClient.RESULT_BAD == result) {
+            Log.d(TAG, "taskCompletionResult::RESULT_BAD: " + restClient.getResponse());
+            activity.setSettingsValidity(false);
+        } else {
+            switch (request) {
+                case REQUEST_TICKET:
+                    Log.d(TAG, "Ticket received for request " + request);
+                    receiveTicket();
+                    break;
+                case REQUEST_NETWORK_DEVICES:
+                    Log.d(TAG, "Network devices received");
+                    receiveNetworkDevices();
+                    break;
+                case REQUEST_HOSTS:
+                    Log.d(TAG, "Hosts received");
+                    receiveHosts();
+                    break;
+                case REQUEST_FLOW_ANALYSIS:
+                    Log.d(TAG, "Flow analysis received");
+                    receiveFlowAnalysis();
+                    break;
+                case REQUEST_LEGIT_READS:
+                    Log.d(TAG, "Legit reads received");
+                    receiveLegitReads();
+                    break;
+                case REQUEST_READ:
+                    Log.d(TAG, "Read request received");
+                    receiveReadRequest();
+                    break;
+                case REQUEST_TASK_COMPLETION:
+                    Log.d(TAG, "Task completed");
+                    receiveTask();
+                    break;
+                case REQUEST_FILE:
+                    Log.d(TAG, "File request completed");
+                    receiveFile();
+                    break;
+                case REQUEST_NETWORK_DEVICE:
+                    Log.d(TAG, "Network device request completed");
+                    receiveNetworkDevice();
+                    break;
+                case RestClient.REQUEST_TEST_SETTINGS:
+                    Log.d(TAG, "taskCompletionResult::REQUEST_TEST_SETTINGS: " + result);
+                    activity.setSettingsValidity(RestClient.RESULT_OK == result);
+                    break;
+                case RestClient.REQUEST_CLI_RUNNER:
+                    Log.d(TAG, "taskCompletionResult::REQUEST_CLI_RUNNER: " + result);
+                    receiveFile();
+                    break;
+                case RestClient.REQUEST_GET_HOSTS:
+                    Log.d(TAG, "taskCompletionResult::REQUEST_GET_HOSTS: " + result);
+                    receiveHosts();
+                    break;
+                case RestClient.REQUEST_GET_NETWORK_DEVICE:
+                    Log.d(TAG, "taskCompletionResult::REQUEST_GET_NETWORK_DEVICE: " + result);
+                    receiveNetworkDevice();
+                    break;
+                case RestClient.REQUEST_GET_NETWORK_DEVICES:
+                    Log.d(TAG, "taskCompletionResult::REQUEST_GET_NETWORK_DEVICES: " + result);
+                    receiveNetworkDevices();
+                    break;
+                case RestClient.REQUEST_GET_USERS:
+                    Log.d(TAG, "taskCompletionResult::REQUEST_GET_USERS: " + result);
+                    receiveUsers();
+                    break;
+            }
         }
     }
 
     public void taskCompletedResult(int result) {
         Log.d(TAG, "taskCompletedResult: " + result);
     }
+
+    public void testSettings() {
+        Log.d(TAG, "testSettings");
+        request = RestClient.REQUEST_TEST_SETTINGS;
+        restClient = new RestClient(this, getBaseUrlString(), username, password);
+        restClient.setRequestCode(request);
+        restClient.execute();
+    }
+
 }

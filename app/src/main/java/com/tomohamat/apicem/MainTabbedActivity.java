@@ -108,7 +108,7 @@ public class MainTabbedActivity extends AppCompatActivity implements
 /*
             case R.id.requestTestButton:
                 if (apicEm.isInitialized()) {
-                    apicEm.requestRead();
+                    apicEm.requestCliRunner();
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.apicem_not_initialized), Toast.LENGTH_SHORT).show();
                     startActivitySettings();
@@ -128,10 +128,9 @@ public class MainTabbedActivity extends AppCompatActivity implements
                 break;
             case R.id.cliRunnerButton:
                 if (apicEm.isInitialized()) {
-                    String id = mSwitchFragment.getSelectedDeviceId();
                     mSwitchFragment.showPleaseWait();
                     mSwitchFragment.showProgressDialog(true);
-                    apicEm.requestRead(mSwitchFragment.getSelectedDeviceId(), mSwitchFragment.getCli());
+                    apicEm.requestCliRunner(mSwitchFragment.getSelectedDeviceId(), mSwitchFragment.getCli());
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.apicem_not_initialized), Toast.LENGTH_SHORT).show();
                     startActivitySettings();
@@ -304,7 +303,7 @@ public class MainTabbedActivity extends AppCompatActivity implements
         mGeneralFragment.showUsers(users);
     }
 
-    private void startActivitySettings() {
+    public void startActivitySettings() {
         Intent intent = new Intent();
         intent.setClass(getApplicationContext(), SettingsActivity.class);
         startActivity(intent);
@@ -341,6 +340,7 @@ public class MainTabbedActivity extends AppCompatActivity implements
             View rootView = inflater.inflate(R.layout.fragment_main_tabbed, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
             return rootView;
         }
     }
