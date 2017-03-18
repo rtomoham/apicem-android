@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -53,6 +54,7 @@ public class MainTabbedActivity extends AppCompatActivity implements
     private ViewPager mViewPager;
     private GeneralFragment mGeneralFragment;
     private SwitchFragment mSwitchFragment;
+    private ApFragment mApFragment;
     private Button mGetUsersButton, mGetNetworkDevicesButton, mRequestHostsButton, mRequestLegitReadsButton, mRequestTestButton;
     private Spinner mSpinner;
     private TextView mTestView;
@@ -99,7 +101,7 @@ public class MainTabbedActivity extends AppCompatActivity implements
                 if (apicEm.isInitialized()) {
                     mGeneralFragment.showProgressDialog(true);
                     mGeneralFragment.showPleaseWait();
-                    apicEm.requestLegitReads();
+                    apicEm.requestCliRunnerCommands();
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.apicem_not_initialized), Toast.LENGTH_SHORT).show();
                     startActivitySettings();
@@ -147,7 +149,7 @@ public class MainTabbedActivity extends AppCompatActivity implements
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -156,10 +158,15 @@ public class MainTabbedActivity extends AppCompatActivity implements
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+
         mGeneralFragment = GeneralFragment.newInstance(this, "", "");
         mGeneralFragment.setListener(this);
         mSwitchFragment = SwitchFragment.newInstance("", "");
         mSwitchFragment.setListener(this);
+        mApFragment = ApFragment.newInstance("", "");
+        mApFragment.setListener(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -169,23 +176,6 @@ public class MainTabbedActivity extends AppCompatActivity implements
                         .setAction("Action", null).show();
             }
         });
-
-/*
-        mGetUsersButton = (Button) findViewById(R.id.requestUsersButton);
-        mGetUsersButton.setOnClickListener(this);
-        mGetNetworkDevicesButton = (Button) findViewById(R.id.requestNetworkDevicesButton);
-        mGetNetworkDevicesButton.setOnClickListener(this);
-        mRequestHostsButton = (Button) findViewById(R.id.requestHostsButton);
-        mRequestHostsButton.setOnClickListener(this);
-        mRequestLegitReadsButton = (Button) findViewById(R.id.requestLegitReadsButton);
-        mRequestLegitReadsButton.setOnClickListener(this);
-        mRequestTestButton = (Button) findViewById(R.id.requestTestButton);
-        mRequestTestButton.setOnClickListener(this);
-
-        mSpinner = (Spinner) findViewById(R.id.spinner);
-        mTestView = (TextView) findViewById(R.id.testView);
-*/
-
     }
 
 
@@ -241,6 +231,8 @@ public class MainTabbedActivity extends AppCompatActivity implements
 
         int revision = prefs.getInt(getString(R.string.pref_revision), 0);
 
+        Log.d(TAG, "readSettings::revision == " + revision + " settingsRevision == " + settingsRevision);
+
         if (revision > settingsRevision) {
             settingsRevision = revision;
             String address = prefs.getString(getString(R.string.pref_address), null);
@@ -269,6 +261,7 @@ public class MainTabbedActivity extends AppCompatActivity implements
         if (valid) {
             mGeneralFragment.showProgressDialog(false);
             mGeneralFragment.enableButtons();
+//            apicEm.requestApicEmVersion();
             apicEm.requestNetworkDevices();
         } else {
             // disable all buttons, except settings
@@ -366,7 +359,7 @@ public class MainTabbedActivity extends AppCompatActivity implements
                 case 1:
                     return mSwitchFragment;
                 default:
-                    return PlaceholderFragment.newInstance(position + 1);
+                    return mApFragment;
             }
         }
 

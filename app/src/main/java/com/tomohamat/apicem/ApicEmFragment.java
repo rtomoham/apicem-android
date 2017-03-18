@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 public class ApicEmFragment extends Fragment {
 
+    private static final String TAG = "ApicEmFragment";
+
     protected ArrayList<Button> buttons;
     protected View.OnClickListener listener;
 
@@ -50,7 +52,6 @@ public class ApicEmFragment extends Fragment {
                 public void run() {
                     while (true) {
                         try {
-                            // sleep the thread, whatever time you want.
                             sleep(500);
                         } catch (Exception e) {
                         }

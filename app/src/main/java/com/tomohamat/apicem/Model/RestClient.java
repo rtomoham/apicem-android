@@ -22,80 +22,77 @@ import static java.lang.Thread.sleep;
  */
 public class RestClient extends AsyncTask<String, Void, String> {
 
+    // request codes
+    public static final int REQUEST_NONE = 0;
     public static final int REQUEST_TEST_SETTINGS = 1000;
-    public static final int REQUEST_CLI_RUNNER = 1001;
-    public static final int REQUEST_GET_FLOW_ANALYSIS = 1002;
-    public static final int REQUEST_GET_HOSTS = 1003;
-    public static final int REQUEST_GET_NETWORK_DEVICE = 1004;
-    public static final int REQUEST_GET_NETWORK_DEVICES = 1005;
-    public static final int REQUEST_GET_USERS = 1006;
+    public static final int REQUEST_APIC_EM_VERSION = 1001;
+    public static final int REQUEST_CLI_RUNNER = 1002;
+    public static final int REQUEST_GET_CLI_RUNNER_COMMANDS = 1003;
+    public static final int REQUEST_GET_FLOW_ANALYSIS = 1004;
+    public static final int REQUEST_GET_HOSTS = 1005;
+    public static final int REQUEST_GET_NETWORK_DEVICE = 1006;
+    public static final int REQUEST_GET_NETWORK_DEVICES = 1007;
+    public static final int REQUEST_GET_USERS = 1008;
+    // exceptions
     public static final String EXCEPTION_UNKNOWN_HOST = "UNKNOWN HOST EXCEPTION";
-    /*
-    public static final int REQ_TEST_SETTINGS = 1000;
-    public static final int REQ_GET_USERS = 1001;
-    public static final int REQ_AUTHENTICATED_GET = 1001;
-    public static final int REQ_AUTHENTICATED_POST = 1002;
-*/
+    // request codes
     public static final int REQ_POST = 0;
     public static final int REQ_PUT = 1;
     public static final int REQ_GET = 2;
-    public static final String WAIT_FOR_TASK_COMPLETION = "WAIT FOR TASK COMPLETION";
+    // result codes
     public static final int RESULT_OK = 1;
+    public static final int RESULT_NONE = 0;
     public static final int RESULT_BAD = -1;
     private static final String TAG = "RestClient";
+    // REST methods
     private static final String METHOD_POST = "POST";
     private static final String METHOD_PUT = "PUT";
     private static final String METHOD_GET = "GET";
+    // URL suffixes for REST calls (to be appended to baseUrl
     private static final String URL_SUFFIX_TICKET = "/ticket";
     private static final String URL_SUFFIX_TASK = "/task";
     private static final String URL_SUFFIX_USER = "/user";
-    private static final String URL_SUFFIX_NETWORK_DEVICE = "/network-device";
     private static final String URL_SUFFIX_HOST = "/host";
-    private static final String URL_SUFFIC_FLOW_ANALYSIS = "/flow-analysis";
-    private static final String URL_SUFFIC_LEGIT_READS = "/network-device-poller/cli/legit-reads";
-    private static final String URL_SUFFIX_CLI_RUNNER = "/network-device-poller/cli/read-request";
     private static final String URL_SUFFIX_FILE = "/file";
+    private static final String URL_SUFFIC_FLOW_ANALYSIS = "/flow-analysis";
+    private static final String URL_SUFFIX_CLI_RUNNER = "/network-device-poller/cli/read-request";
+    private static final String URL_SUFFIC_CLI_RUNNER_COMMANDS = "/network-device-poller/cli/legit-reads";
+    private static final String URL_SUFFIX_NETWORK_DEVICE = "/network-device";
     protected static int responseCode;
     protected static String response;
     protected int result;
     protected String jsonData, urlString, requestMethod;
-    //    protected String ticketUrl, taskUrl, fileUrl;
     protected String username, password;
     protected ApicEm apicEm;
-    private int requestCode;
+    /**
+     * Base url to make REST calls, including http:// or https:// and the port number, e.g. :443
+     */
     private String baseUrl;
+    /**
+     * Identifier for the current request. Must be set prior to calling .execute(String[])
+     */
+    private int requestCode;
     private String authenticationString;
 
     public RestClient(ApicEm apicEm, String baseUrl, String username, String password) {
         this.apicEm = apicEm;
         this.baseUrl = baseUrl;
-//        this.taskUrl = taskUrl;
-//        this.fileUrl = fileUrl;
         this.username = username;
         this.password = password;
 
         authenticationString = "{\"username\" : \"" + username + "\", \"password\" : \"" + password + "\"}";
     }
 
-    public String getResponse() {
-        return response;
-    }
-
-    public static void setResponse(String response) {
-        RestClient.response = response;
-    }
-
-    public int getResponseCode() {
-        return responseCode;
-    }
-
-    public static void setResponseCode(int responseCode) {
-        RestClient.responseCode = responseCode;
+    private void getApicEmVersion() {
+        String urlString = "https://sandboxapic.cisco.com/system_info";
+        makeRestCall(REQ_GET, urlString, getAuthenticationTicket(), null);
+        if (HttpURLConnection.HTTP_OK == responseCode) {
+            Log.d(TAG, "getApicEmVErsion::response == " + response);
+        }
     }
 
     private String getAuthenticationTicket() {
         String ticket = null;
-
         String ticketUrl = baseUrl + URL_SUFFIX_TICKET;
 
         makeRestCall(REQ_POST, ticketUrl, null, authenticationString);
@@ -116,11 +113,15 @@ public class RestClient extends AsyncTask<String, Void, String> {
             responseJson = responseJson.getJSONObject("response");
             authenticationTicket = responseJson.getString("serviceTicket");
 //            Log.d(TAG, "Ticket received: " + authenticationTicket);
-
         } catch (JSONException e) {
             Log.d(TAG, "getAuthenticationTicketFromResponse caught exception " + e.toString());
         }
         return authenticationTicket;
+    }
+
+    private void getCliRunnerCommands() {
+        String urlString = baseUrl + URL_SUFFIC_CLI_RUNNER_COMMANDS;
+        makeRestCall(REQ_POST, urlString, getAuthenticationTicket(), null);
     }
 
     private void getFile(String fileId) {
@@ -158,6 +159,14 @@ public class RestClient extends AsyncTask<String, Void, String> {
         makeRestCall(REQ_POST, urlString, getAuthenticationTicket(), payload);
     }
 
+    public String getResponse() {
+        return response;
+    }
+
+    public int getResponseCode() {
+        return responseCode;
+    }
+
     private String getTaskId() {
         try {
             JSONObject responseJson = new JSONObject(response);
@@ -192,6 +201,11 @@ public class RestClient extends AsyncTask<String, Void, String> {
     private void getNetworkDevices() {
         String urlString = baseUrl + URL_SUFFIX_NETWORK_DEVICE;
         makeRestCall(REQ_GET, urlString, getAuthenticationTicket(), null);
+        if (HttpURLConnection.HTTP_OK == responseCode) {
+            result = RESULT_OK;
+        } else {
+            result = RESULT_BAD;
+        }
     }
 
     private void getUsers() {
@@ -202,6 +216,12 @@ public class RestClient extends AsyncTask<String, Void, String> {
         } else {
             result = RESULT_BAD;
         }
+    }
+
+    public void reset() {
+        response = null;
+        responseCode = -1;
+        result = RESULT_NONE;
     }
 
     public void setJsonData(String jsonData) {
@@ -268,6 +288,10 @@ public class RestClient extends AsyncTask<String, Void, String> {
                 Log.d(TAG, "makeRestCall::REST call succeeded. Response code: " + response.toString());
             } else {
                 Log.d(TAG, "makeRestCall::REST call failed. Response code: " + responseCode);
+                result = RESULT_BAD;
+                if (403 == responseCode) {
+                    Log.d(TAG, "makeRestCall::REST call failed. Command not found.");
+                }
             }
         } catch (java.net.UnknownHostException unknownHostException) {
             Log.d(TAG, "makeRestCall::UnKnownHostException" + unknownHostException.toString());
@@ -279,8 +303,6 @@ public class RestClient extends AsyncTask<String, Void, String> {
     }
 
     /**
-     * Makes the actual REST call.
-     *
      * @param strings Three or four element String array containing the following items:
      *                strings[0] == the complete URL, including protocol, port number and REST call
      *                strings[1] == requestMethod in [METHOD_POST, METHOD_PUT, METHOD_GET]
@@ -293,8 +315,14 @@ public class RestClient extends AsyncTask<String, Void, String> {
             case REQUEST_TEST_SETTINGS:
                 testSettings();
                 break;
+            case REQUEST_APIC_EM_VERSION:
+                getApicEmVersion();
+                break;
             case REQUEST_CLI_RUNNER:
                 runCliRunner(strings[0], strings[1]);
+                break;
+            case REQUEST_GET_CLI_RUNNER_COMMANDS:
+                getCliRunnerCommands();
                 break;
             case REQUEST_GET_FLOW_ANALYSIS:
                 getFlowAnalysis(strings[0], strings[1]);
@@ -304,6 +332,7 @@ public class RestClient extends AsyncTask<String, Void, String> {
                 break;
             case REQUEST_GET_NETWORK_DEVICE:
                 getNetworkDevice(strings[0]);
+                break;
             case REQUEST_GET_NETWORK_DEVICES:
                 getNetworkDevices();
                 break;
@@ -397,6 +426,5 @@ public class RestClient extends AsyncTask<String, Void, String> {
             }
         }
     }
-
 
 }

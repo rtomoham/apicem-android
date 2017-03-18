@@ -1,21 +1,12 @@
 package com.tomohamat.apicem;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,20 +24,11 @@ import com.tomohamat.apicem.Model.ApicEm;
  * A login screen that offers login via email/password.
  */
 public class SettingsActivity extends AppCompatActivity implements
-        LoaderCallbacks<Cursor>,
+//        LoaderCallbacks<Cursor>,
         RadioGroup.OnCheckedChangeListener {
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
+    private static final String TAG = "SettingsActivity";
+
     private ApicEm apicEm;
     private int settingsRevision = -1;
     private String address;
@@ -54,10 +36,11 @@ public class SettingsActivity extends AppCompatActivity implements
     private String port;
     private String username;
     private String password;
+
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+//    private UserLoginTask mAuthTask = null;
 
     // UI references.
 //    private AutoCompleteTextView mEmailView;
@@ -103,7 +86,6 @@ public class SettingsActivity extends AppCompatActivity implements
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-//                    attemptLogin();
                     writeSettings();
                     return true;
                 }
@@ -115,14 +97,10 @@ public class SettingsActivity extends AppCompatActivity implements
         mSaveButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-//                attemptLogin();
                 writeSettings();
                 finish();
             }
         });
-
-        Button mTestSettingsButton = (Button) findViewById(R.id.testSettingsButton);
-
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -163,17 +141,17 @@ public class SettingsActivity extends AppCompatActivity implements
     /**
      * Callback received when a permissions request has been completed.
      */
+/*
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-/*
         if (requestCode == REQUEST_READ_CONTACTS) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 populateAutoComplete();
             }
         }
-*/
     }
+*/
 
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
@@ -238,7 +216,6 @@ public class SettingsActivity extends AppCompatActivity implements
             mAuthTask.execute((Void) null);
         }
     }
-*/
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
@@ -248,10 +225,12 @@ public class SettingsActivity extends AppCompatActivity implements
         //TODO: Replace this with your own logic
         return password.length() > 4;
     }
+*/
 
     /**
      * Shows the progress UI and hides the login form.
      */
+/*
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -304,7 +283,6 @@ public class SettingsActivity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-/*
         List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -313,13 +291,14 @@ public class SettingsActivity extends AppCompatActivity implements
         }
 
         addEmailsToAutoComplete(emails);
-*/
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
     }
+
+*/
 
 /*
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
@@ -336,6 +315,8 @@ public class SettingsActivity extends AppCompatActivity implements
         SharedPreferences prefs = getSharedPreferences(getString(R.string.pref_identifier), Context.MODE_PRIVATE);
 
         int revision = prefs.getInt(getString(R.string.pref_revision), 0);
+
+        Log.d(TAG, "readSettings::revision == " + revision + " settingsRevision == " + settingsRevision);
 
         if (revision > settingsRevision) {
             settingsRevision = revision;
@@ -435,6 +416,7 @@ public class SettingsActivity extends AppCompatActivity implements
         }
     }
 
+/*
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -444,11 +426,12 @@ public class SettingsActivity extends AppCompatActivity implements
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
     }
-
+*/
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
+/*
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
@@ -501,5 +484,6 @@ public class SettingsActivity extends AppCompatActivity implements
             showProgress(false);
         }
     }
+*/
 }
 

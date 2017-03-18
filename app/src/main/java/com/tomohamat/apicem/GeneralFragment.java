@@ -94,8 +94,8 @@ public class GeneralFragment extends ApicEmFragment {
 
         mResultTextView = (TextView) rootView.findViewById(R.id.generalFragmentView);
 
-        disableButtons();
-        showProgressDialog(true);
+//        disableButtons();
+//        showProgressDialog(true);
 
         return rootView;
     }
