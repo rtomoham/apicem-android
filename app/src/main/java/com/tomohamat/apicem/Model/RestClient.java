@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -33,7 +32,10 @@ public class RestClient extends AsyncTask<String, Void, String> {
     public static final int REQUEST_GET_NETWORK_DEVICE = 1006;
     public static final int REQUEST_GET_NETWORK_DEVICES = 1007;
     public static final int REQUEST_GET_USERS = 1008;
-    // exceptions
+    // exceptions & errors
+    public static final String ERROR_IN_SETTINGS = "ERROR IN SETTINGS";
+    public static final String ERROR_USER_NOT_AUTHORIZED = "USER NOT AUTHORIZED TO MAKE CALL";
+    public static final String EXCEPTION_IO_EXCEPTION = "IO EXCEPTION";
     public static final String EXCEPTION_UNKNOWN_HOST = "UNKNOWN HOST EXCEPTION";
     // request codes
     public static final int REQ_POST = 0;
@@ -289,16 +291,23 @@ public class RestClient extends AsyncTask<String, Void, String> {
             } else {
                 Log.d(TAG, "makeRestCall::REST call failed. Response code: " + responseCode);
                 result = RESULT_BAD;
-                if (403 == responseCode) {
-                    Log.d(TAG, "makeRestCall::REST call failed. Command not found.");
+                switch (responseCode) {
+                    case 307:
+                        response = ERROR_IN_SETTINGS;
+                        break;
+                    case 403:
+                        response = ERROR_USER_NOT_AUTHORIZED;
+                        break;
                 }
             }
         } catch (java.net.UnknownHostException unknownHostException) {
             Log.d(TAG, "makeRestCall::UnKnownHostException" + unknownHostException.toString());
             response = EXCEPTION_UNKNOWN_HOST;
             result = RESULT_BAD;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (java.io.IOException ioException) {
+            Log.d(TAG, "makeRestCall::IOException" + ioException.toString());
+            response = EXCEPTION_IO_EXCEPTION;
+            result = RESULT_BAD;
         }
     }
 

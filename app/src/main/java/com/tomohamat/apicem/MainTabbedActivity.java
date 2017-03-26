@@ -265,7 +265,7 @@ public class MainTabbedActivity extends AppCompatActivity implements
         } else {
             // disable all buttons, except settings
             mGeneralFragment.disableButtons();
-            Toast.makeText(getApplicationContext(), "Error in settings", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Error in settings: " + apicEm.getError(), Toast.LENGTH_SHORT).show();
             startActivitySettings();
         }
     }

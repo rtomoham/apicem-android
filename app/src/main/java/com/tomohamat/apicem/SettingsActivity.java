@@ -360,12 +360,12 @@ public class SettingsActivity extends AppCompatActivity implements
 
         switch (protocolRadioGroup.getCheckedRadioButtonId()) {
             case R.id.httpsRadioButton:
-                if (!"https".equals(protocol)) {
-                    return false;
+                if ("http".equals(protocol)) {
+                    return true;
                 }
             case R.id.httpRadioButton:
-                if (!"http".equals(protocol)) {
-                    return false;
+                if ("https".equals(protocol)) {
+                    return true;
                 }
         }
 
@@ -373,6 +373,8 @@ public class SettingsActivity extends AppCompatActivity implements
             return true;
         }
 
+        Log.d(TAG, "settingsChanged::mUsernameView == " + mUsernameView.getText());
+        Log.d(TAG, "settingsChanged::username == " + username);
         if (!mUsernameView.getText().toString().equals(username)) {
             return true;
         }
@@ -393,11 +395,16 @@ public class SettingsActivity extends AppCompatActivity implements
     }
 
     private void writeSettings() {
+        Log.d(TAG, "writeSettings::settingsChanged == " + settingsChanged());
         if (settingsChanged()) {
             SharedPreferences prefs = getSharedPreferences(getString(R.string.pref_identifier), Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
 
+            Log.d(TAG, "writeSettings::settingsRevision");
+
             editor.putInt(getString(R.string.pref_revision), ++settingsRevision);
+
+            Log.d(TAG, "writeSettings::settingsRevision");
 
             editor.putString(getString(R.string.pref_address), mAddressView.getText().toString());
             switch (protocolRadioGroup.getCheckedRadioButtonId()) {

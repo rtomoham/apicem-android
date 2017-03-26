@@ -75,6 +75,10 @@ public class ApicEm implements TaskDelegate {
         return protocol + "://" + this.address + ":" + this.port + URL_SUFFIX;
     }
 
+    public String getError() {
+        return restClient.getResponse();
+    }
+
     public boolean getSettingsTested() {
         return settingsTested;
     }
