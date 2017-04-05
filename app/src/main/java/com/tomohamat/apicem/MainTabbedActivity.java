@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,12 +31,10 @@ import com.tomohamat.apicem.Model.User;
 
 import java.util.ArrayList;
 
-public class MainTabbedActivity extends AppCompatActivity implements
+public class MainTabbedActivity extends MyAppActivity implements
         View.OnClickListener {
 
     private static final String TAG = "MainTabbedActivity";
-    private static final int RC_EXIT_SETTINGS_ACTIVITY = 1001;
-    private int settingsRevision = -1;
     private boolean settingsValid = false;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide

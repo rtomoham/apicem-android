@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -23,7 +22,7 @@ import com.tomohamat.apicem.Model.ApicEm;
 /**
  * A login screen that offers login via email/password.
  */
-public class SettingsActivity extends AppCompatActivity implements
+public class SettingsActivity extends MyAppActivity implements
 //        LoaderCallbacks<Cursor>,
         RadioGroup.OnCheckedChangeListener {
 

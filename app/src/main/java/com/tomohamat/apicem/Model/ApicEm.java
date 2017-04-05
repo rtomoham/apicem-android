@@ -2,7 +2,7 @@ package com.tomohamat.apicem.Model;
 
 import android.util.Log;
 
-import com.tomohamat.apicem.MainTabbedActivity;
+import com.tomohamat.apicem.MyAppActivity;
 import com.tomohamat.apicem.TaskDelegate;
 
 import org.json.JSONArray;
@@ -33,7 +33,7 @@ public class ApicEm implements TaskDelegate {
     public static final String PROTOCOL_HTTPS = "https";
     private static final String TAG = "ApicEm";
     private static final String URL_SUFFIX = "/api/v1";
-    private MainTabbedActivity activity;
+    private MyAppActivity activity;
     private String ticketUrl, taskUrl, fileUrl;
     private String successString, failureString, blacklistedString;
 
@@ -54,11 +54,11 @@ public class ApicEm implements TaskDelegate {
 
     private RestClient restClient;
 
-    public ApicEm(MainTabbedActivity activity) {
+    public ApicEm(MyAppActivity activity) {
         this.activity = activity;
     }
 
-    public ApicEm(MainTabbedActivity activity, String address, String protocol, String port, String username, String password) {
+    public ApicEm(MyAppActivity activity, String address, String protocol, String port, String username, String password) {
         this(activity);
 
         this.address = address;
