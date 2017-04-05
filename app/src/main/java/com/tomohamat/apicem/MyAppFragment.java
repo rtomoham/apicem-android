@@ -14,9 +14,9 @@ import java.util.ArrayList;
  * Created by Robert on 3/15/2017.
  */
 
-public class ApicEmFragment extends Fragment {
+public class MyAppFragment extends Fragment {
 
-    private static final String TAG = "ApicEmFragment";
+    private static final String TAG = "MyAppFragment";
 
     protected ArrayList<Button> buttons;
     protected View.OnClickListener listener;

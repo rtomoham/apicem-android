@@ -24,7 +24,7 @@ import java.util.List;
  * Use the {@link SwitchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SwitchFragment extends ApicEmFragment {
+public class SwitchFragment extends MyAppFragment {
 
     private static final String TAG = "SwitchFragment";
     // TODO: Rename parameter arguments, choose names that match

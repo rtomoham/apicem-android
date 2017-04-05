@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * Use the {@link GeneralFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GeneralFragment extends ApicEmFragment {
+public class GeneralFragment extends MyAppFragment {
 
     private static final String TAG = "GeneralFragment";
     // TODO: Rename parameter arguments, choose names that match
