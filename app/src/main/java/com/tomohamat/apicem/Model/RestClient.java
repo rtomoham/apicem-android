@@ -125,6 +125,11 @@ public class RestClient extends AsyncTask<String, Void, String> {
     private void getCliRunnerCommands() {
         String urlString = baseUrl + URL_SUFFIC_CLI_RUNNER_COMMANDS;
         makeRestCall(REQ_GET, urlString, getAuthenticationTicket(), null);
+        if (HttpURLConnection.HTTP_OK == responseCode) {
+            result = RESULT_OK;
+        } else {
+            result = RESULT_BAD;
+        }
     }
 
     private void getFile(String fileId) {
@@ -259,7 +264,6 @@ public class RestClient extends AsyncTask<String, Void, String> {
             switch (requestMethod) {
                 case REQ_GET:
                     connection.setRequestMethod(METHOD_GET);
-                    Log.d(TAG, "makeRestCall::make GET call");
                     responseCode = connection.getResponseCode();
                     Log.d(TAG, "makeRestCall::GET Response Code :: " + responseCode);
                     break;
