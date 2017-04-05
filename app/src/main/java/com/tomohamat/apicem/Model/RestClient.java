@@ -35,6 +35,7 @@ public class RestClient extends AsyncTask<String, Void, String> {
     // exceptions & errors
     public static final String ERROR_IN_SETTINGS = "ERROR IN SETTINGS";
     public static final String ERROR_USER_NOT_AUTHORIZED = "USER NOT AUTHORIZED TO MAKE CALL";
+    public static final String ERROR_PROCESSING_REQUEST = "SERVER COULD NOT FULFILL REQUEST";
     public static final String EXCEPTION_IO_EXCEPTION = "IO EXCEPTION";
     public static final String EXCEPTION_UNKNOWN_HOST = "UNKNOWN HOST EXCEPTION";
     // request codes
@@ -123,7 +124,7 @@ public class RestClient extends AsyncTask<String, Void, String> {
 
     private void getCliRunnerCommands() {
         String urlString = baseUrl + URL_SUFFIC_CLI_RUNNER_COMMANDS;
-        makeRestCall(REQ_POST, urlString, getAuthenticationTicket(), null);
+        makeRestCall(REQ_GET, urlString, getAuthenticationTicket(), null);
     }
 
     private void getFile(String fileId) {
@@ -258,6 +259,7 @@ public class RestClient extends AsyncTask<String, Void, String> {
             switch (requestMethod) {
                 case REQ_GET:
                     connection.setRequestMethod(METHOD_GET);
+                    Log.d(TAG, "makeRestCall::make GET call");
                     responseCode = connection.getResponseCode();
                     Log.d(TAG, "makeRestCall::GET Response Code :: " + responseCode);
                     break;
@@ -297,6 +299,9 @@ public class RestClient extends AsyncTask<String, Void, String> {
                         break;
                     case 403:
                         response = ERROR_USER_NOT_AUTHORIZED;
+                        break;
+                    case 500:
+                        response = ERROR_PROCESSING_REQUEST;
                         break;
                 }
             }

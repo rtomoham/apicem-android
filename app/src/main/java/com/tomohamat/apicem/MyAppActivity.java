@@ -3,6 +3,7 @@ package com.tomohamat.apicem;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.tomohamat.apicem.Model.ApicEm;
 import com.tomohamat.apicem.Model.Host;
 import com.tomohamat.apicem.Model.NetworkDevice;
 import com.tomohamat.apicem.Model.User;
@@ -18,6 +19,8 @@ public class MyAppActivity extends AppCompatActivity {
     protected static final int RC_EXIT_SETTINGS_ACTIVITY = 1001;
     private static final String TAG = "MyAppActivity";
     protected int settingsRevision = -1;
+
+    protected ApicEm apicEm;
 
     /**
      * Empty stub, to be implemented by child.

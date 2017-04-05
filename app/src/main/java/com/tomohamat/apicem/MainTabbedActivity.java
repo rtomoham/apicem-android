@@ -58,8 +58,6 @@ public class MainTabbedActivity extends MyAppActivity implements
 
     private ArrayList<NetworkDevice> networkDevices;
 
-    private ApicEm apicEm;
-
     @Override
     public void onClick(View view) {
         Log.d(TAG, "onClick received for " + view.toString());

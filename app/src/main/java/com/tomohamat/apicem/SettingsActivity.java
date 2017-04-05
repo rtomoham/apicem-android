@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tomohamat.apicem.Model.ApicEm;
 
@@ -28,7 +29,6 @@ public class SettingsActivity extends MyAppActivity implements
 
     private static final String TAG = "SettingsActivity";
 
-    private ApicEm apicEm;
     private int settingsRevision = -1;
     private String address;
     private String protocol;
@@ -96,8 +96,9 @@ public class SettingsActivity extends MyAppActivity implements
         mSaveButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                writeSettings();
-                finish();
+                checkSettings();
+//                writeSettings();
+//                finish();
             }
         });
 
@@ -309,6 +310,27 @@ public class SettingsActivity extends MyAppActivity implements
         mEmailView.setAdapter(adapter);
     }
 */
+    private void checkSettings() {
+        switch (protocolRadioGroup.getCheckedRadioButtonId()) {
+            case R.id.httpsRadioButton:
+                apicEm = new ApicEm(this,
+                        mAddressView.getText().toString(),
+                        getString(R.string.button_https),
+                        mPortView.getText().toString(),
+                        mUsernameView.getText().toString(),
+                        mPasswordView.getText().toString());
+                break;
+            case R.id.httpRadioButton:
+                apicEm = new ApicEm(this,
+                        mAddressView.getText().toString(),
+                        getString(R.string.button_http),
+                        mPortView.getText().toString(),
+                        mUsernameView.getText().toString(),
+                        mPasswordView.getText().toString());
+                break;
+        }
+        apicEm.testSettings();
+    }
 
     private void readSettings() {
         SharedPreferences prefs = getSharedPreferences(getString(R.string.pref_identifier), Context.MODE_PRIVATE);
@@ -351,6 +373,25 @@ public class SettingsActivity extends MyAppActivity implements
         }
 
     }
+
+    public void setSettingsValidity(boolean valid) {
+        Log.d(TAG, "setSettingsValidity " + valid);
+//        settingsValid = valid;
+        if (valid) {
+//            mGeneralFragment.showProgressDialog(false);
+//            mGeneralFragment.enableButtons();
+//            apicEm.requestApicEmVersion();
+//            apicEm.requestNetworkDevices();
+            writeSettings();
+            finish();
+        } else {
+            // disable all buttons, except settings
+//            mGeneralFragment.disableButtons();
+            Toast.makeText(getApplicationContext(), "Error in settings: " + apicEm.getError(), Toast.LENGTH_SHORT).show();
+//            startActivitySettings();
+        }
+    }
+
 
     private boolean settingsChanged() {
         if (!mAddressView.getText().toString().equals(address)) {
