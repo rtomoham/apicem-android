@@ -123,7 +123,41 @@ public class ApicEm implements TaskDelegate {
         String response = restClient.getResponse();
 
         Log.d(TAG, "receiveApicEmVersion::response == " + response);
+    }
 
+    private void receiveDeviceLicenses() {
+        String response = restClient.getResponse();
+        Log.d(TAG, "receiveDeviceLicense: " + response);
+
+        try {
+            JSONObject responseJson = new JSONObject(response);
+            JSONArray jsonArray = responseJson.getJSONArray("response");
+
+            ArrayList<DeviceLicense> deviceLicenses = new ArrayList();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                DeviceLicense license = null;
+
+                responseJson = (JSONObject) jsonArray.get(i);
+
+                String id = responseJson.getString("id");
+                int index = responseJson.getInt("licenseIndex");
+                String name = responseJson.getString("name");
+                String storeName = responseJson.getString("storeName");
+                String status = responseJson.getString("status");
+                String description = responseJson.getString("description");
+                String type = responseJson.getString("type");
+
+                license = new DeviceLicense(name, description, type, status, index, storeName, id);
+                deviceLicenses.add(license);
+            }
+            activity.showDeviceLicenses(deviceLicenses);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // reset request
+        resetRequest();
     }
 
     private void receiveFile() {
@@ -493,6 +527,19 @@ public class ApicEm implements TaskDelegate {
     }
 
     /**
+     * A request for a network device's licenses.
+     * @param id
+     */
+    public void requestDeviceLicenses(String id) {
+        String[] strings = new String[1];
+        strings[0] = id;
+
+        restClient = new RestClient(this, getBaseUrlString(), username, password);
+        setRequestCode(RestClient.REQUEST_GET_DEVICE_LICENSES);
+        restClient.execute(strings);
+    }
+
+    /**
      * A request for a network device details.
      * @param id the device ID
      */
@@ -569,6 +616,10 @@ public class ApicEm implements TaskDelegate {
                 case RestClient.REQUEST_GET_CLI_RUNNER_COMMANDS:
                     Log.d(TAG, "taskCompletionResult::REQUEST_CLI_RUNNER_COMMANDS: " + result);
                     receiveCliRunnerCommands();
+                    break;
+                case RestClient.REQUEST_GET_DEVICE_LICENSES:
+                    Log.d(TAG, "taskCompletionResult::REQUEST_GET_DEVICE_LICENSES: " + result);
+                    receiveDeviceLicenses();
                     break;
                 case RestClient.REQUEST_GET_HOSTS:
                     Log.d(TAG, "taskCompletionResult::REQUEST_GET_HOSTS: " + result);

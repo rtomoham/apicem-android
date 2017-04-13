@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.tomohamat.apicem.Model.ApicEm;
+import com.tomohamat.apicem.Model.DeviceLicense;
 import com.tomohamat.apicem.Model.Host;
 import com.tomohamat.apicem.Model.NetworkDevice;
 import com.tomohamat.apicem.Model.User;
@@ -60,6 +61,16 @@ public class MyAppActivity extends AppCompatActivity {
     public void showCliRunnerResult(String successString) {
         // Empty stub, to be implemented by child.
         Log.d(TAG, "MyAppActivity.showCliRunnerResult::empty stub called");
+    }
+
+    /**
+     * Empty stub, to be implemented by child.
+     *
+     * @param deviceLicenses
+     */
+    public void showDeviceLicenses(ArrayList<DeviceLicense> deviceLicenses) {
+        // Empty stub, to be implemented by child.
+        Log.d(TAG, "MyAppActivity.showDeviceLicenses::empty stub called");
     }
 
     /**

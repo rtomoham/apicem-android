@@ -32,6 +32,7 @@ public class RestClient extends AsyncTask<String, Void, String> {
     public static final int REQUEST_GET_NETWORK_DEVICE = 1006;
     public static final int REQUEST_GET_NETWORK_DEVICES = 1007;
     public static final int REQUEST_GET_USERS = 1008;
+    public static final int REQUEST_GET_DEVICE_LICENSES = 1009;
     // exceptions & errors
     public static final String ERROR_IN_SETTINGS = "ERROR IN SETTINGS";
     public static final String ERROR_USER_NOT_AUTHORIZED = "USER NOT AUTHORIZED TO MAKE CALL";
@@ -61,6 +62,7 @@ public class RestClient extends AsyncTask<String, Void, String> {
     private static final String URL_SUFFIX_CLI_RUNNER = "/network-device-poller/cli/read-request";
     private static final String URL_SUFFIC_CLI_RUNNER_COMMANDS = "/network-device-poller/cli/legit-reads";
     private static final String URL_SUFFIX_NETWORK_DEVICE = "/network-device";
+    private static final String URL_SUFFIX_DEVICE_LICENSE = "/license-info/network-device";
     protected static int responseCode;
     protected static String response;
     protected int result;
@@ -130,6 +132,20 @@ public class RestClient extends AsyncTask<String, Void, String> {
         } else {
             result = RESULT_BAD;
         }
+    }
+
+    private void getDeviceLicense(String deviceId) {
+        String urlString = baseUrl + URL_SUFFIX_DEVICE_LICENSE + "/" + deviceId;
+        makeRestCall(REQ_GET, urlString, getAuthenticationTicket(), null);
+        if (HttpURLConnection.HTTP_OK == responseCode) {
+            result = RESULT_OK;
+        } else {
+            result = RESULT_BAD;
+        }
+    }
+
+    private void getDeviceLicenses() {
+
     }
 
     private void getFile(String fileId) {
@@ -356,6 +372,9 @@ public class RestClient extends AsyncTask<String, Void, String> {
                 break;
             case REQUEST_GET_USERS:
                 getUsers();
+                break;
+            case REQUEST_GET_DEVICE_LICENSES:
+                getDeviceLicense(strings[0]);
                 break;
         }
         return "";

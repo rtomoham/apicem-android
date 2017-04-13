@@ -9,6 +9,7 @@
     <string name="button_get_legit_reads">Get Legit Reads</string>
     <string name="button_test">Test</string>
     <string name="button_device_details">Get device details</string>
+    <string name="button_device_license">Get device licenses</string>
 
     <string name="apicem_not_initialized">Please configure settings first</string>
 

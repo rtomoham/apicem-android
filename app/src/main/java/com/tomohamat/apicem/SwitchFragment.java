@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.tomohamat.apicem.Model.DeviceLicense;
 import com.tomohamat.apicem.Model.NetworkDevice;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class SwitchFragment extends MyAppFragment {
     private Spinner mSpinner;
     private ArrayList<NetworkDevice> networkDevices, switches;
     private NetworkDevice networkDevice;
-    private Button mGetDeviceDetails, mCliRunnerButton;
+    private Button mGetDeviceDetails, mGetDeviceLicense, mCliRunnerButton;
     private EditText mCliEditText;
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -94,6 +95,10 @@ public class SwitchFragment extends MyAppFragment {
         mGetDeviceDetails.setOnClickListener(listener);
         buttons.add(mGetDeviceDetails);
 
+        mGetDeviceLicense = (Button) rootView.findViewById(R.id.deviceLicenseButton);
+        mGetDeviceLicense.setOnClickListener(listener);
+        buttons.add(mGetDeviceLicense);
+
         mCliEditText = (EditText) rootView.findViewById(R.id.cliEditText);
         mCliRunnerButton = (Button) rootView.findViewById(R.id.cliRunnerButton);
         mCliRunnerButton.setOnClickListener(listener);
@@ -118,6 +123,10 @@ public class SwitchFragment extends MyAppFragment {
             }
         }
     */
+
+    public void setDeviceLicense(DeviceLicense deviceLicense) {
+
+    }
 
     public void setNetworkDevice(NetworkDevice device) {
         this.networkDevice = device;

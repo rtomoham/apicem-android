@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tomohamat.apicem.Model.ApicEm;
+import com.tomohamat.apicem.Model.DeviceLicense;
 import com.tomohamat.apicem.Model.Host;
 import com.tomohamat.apicem.Model.NetworkDevice;
 import com.tomohamat.apicem.Model.User;
@@ -118,6 +119,17 @@ public class MainTabbedActivity extends MyAppActivity implements
                     mSwitchFragment.showPleaseWait();
                     mSwitchFragment.showProgressDialog(true);
                     apicEm.requestNetworkDevice(id);
+                } else {
+                    Toast.makeText(getApplicationContext(), getString(R.string.apicem_not_initialized), Toast.LENGTH_SHORT).show();
+                    startActivitySettings();
+                }
+                break;
+            case R.id.deviceLicenseButton:
+                if (apicEm.isInitialized()) {
+                    String id = mSwitchFragment.getSelectedDeviceId();
+                    mSwitchFragment.showPleaseWait();
+                    mSwitchFragment.showProgressDialog(true);
+                    apicEm.requestDeviceLicenses(id);
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.apicem_not_initialized), Toast.LENGTH_SHORT).show();
                     startActivitySettings();
@@ -267,6 +279,15 @@ public class MainTabbedActivity extends MyAppActivity implements
 
     public void showCliRunnerResult(String result) {
         mSwitchFragment.showProgressDialog(false);
+        mSwitchFragment.showResult(result);
+    }
+
+    public void showDeviceLicenses(ArrayList<DeviceLicense> deviceLicenses) {
+        mSwitchFragment.showProgressDialog(false);
+        String result = new String();
+        for (DeviceLicense deviceLicense : deviceLicenses) {
+            result += deviceLicense.toString();
+        }
         mSwitchFragment.showResult(result);
     }
 
