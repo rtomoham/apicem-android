@@ -10,6 +10,9 @@
     <string name="button_test">Test</string>
     <string name="button_device_details">Get device details</string>
     <string name="button_device_license">Get device licenses</string>
+    <string name="button_get_all_devices_licenses">Get all licenses</string>
+    <string name="button_future1">Future</string>
+    <string name="button_future2">Future</string>
 
     <string name="apicem_not_initialized">Please configure settings first</string>
 

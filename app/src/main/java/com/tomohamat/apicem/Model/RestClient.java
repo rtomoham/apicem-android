@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 import static java.lang.Thread.sleep;
 
@@ -33,6 +34,7 @@ public class RestClient extends AsyncTask<String, Void, String> {
     public static final int REQUEST_GET_NETWORK_DEVICES = 1007;
     public static final int REQUEST_GET_USERS = 1008;
     public static final int REQUEST_GET_DEVICE_LICENSES = 1009;
+    public static final int REQUEST_GET_ALL_DEVICES_LICENSES = 1010;
     // exceptions & errors
     public static final String ERROR_IN_SETTINGS = "ERROR IN SETTINGS";
     public static final String ERROR_USER_NOT_AUTHORIZED = "USER NOT AUTHORIZED TO MAKE CALL";
@@ -65,6 +67,7 @@ public class RestClient extends AsyncTask<String, Void, String> {
     private static final String URL_SUFFIX_DEVICE_LICENSE = "/license-info/network-device";
     protected static int responseCode;
     protected static String response;
+    protected static ArrayList<String> responses;
     protected int result;
     protected String jsonData, urlString, requestMethod;
     protected String username, password;
@@ -86,6 +89,22 @@ public class RestClient extends AsyncTask<String, Void, String> {
         this.password = password;
 
         authenticationString = "{\"username\" : \"" + username + "\", \"password\" : \"" + password + "\"}";
+    }
+
+    private void getAlldevicesLicenses(String[] networkDeviceIds) {
+        responses = new ArrayList();
+
+        int overallResult = RESULT_BAD;
+
+        for (String networkDeviceId : networkDeviceIds) {
+            getDeviceLicenses(networkDeviceId);
+            if (RESULT_OK == result) {
+                responses.add(response);
+                overallResult = RESULT_OK;
+            }
+        }
+
+        result = overallResult;
     }
 
     private void getApicEmVersion() {
@@ -134,7 +153,7 @@ public class RestClient extends AsyncTask<String, Void, String> {
         }
     }
 
-    private void getDeviceLicense(String deviceId) {
+    private void getDeviceLicenses(String deviceId) {
         String urlString = baseUrl + URL_SUFFIX_DEVICE_LICENSE + "/" + deviceId;
         makeRestCall(REQ_GET, urlString, getAuthenticationTicket(), null);
         if (HttpURLConnection.HTTP_OK == responseCode) {
@@ -142,10 +161,6 @@ public class RestClient extends AsyncTask<String, Void, String> {
         } else {
             result = RESULT_BAD;
         }
-    }
-
-    private void getDeviceLicenses() {
-
     }
 
     private void getFile(String fileId) {
@@ -185,6 +200,10 @@ public class RestClient extends AsyncTask<String, Void, String> {
 
     public String getResponse() {
         return response;
+    }
+
+    public ArrayList<String> getResponses() {
+        return responses;
     }
 
     public int getResponseCode() {
@@ -349,6 +368,9 @@ public class RestClient extends AsyncTask<String, Void, String> {
             case REQUEST_TEST_SETTINGS:
                 testSettings();
                 break;
+            case REQUEST_GET_ALL_DEVICES_LICENSES:
+                getAlldevicesLicenses(strings);
+                break;
             case REQUEST_APIC_EM_VERSION:
                 getApicEmVersion();
                 break;
@@ -374,7 +396,7 @@ public class RestClient extends AsyncTask<String, Void, String> {
                 getUsers();
                 break;
             case REQUEST_GET_DEVICE_LICENSES:
-                getDeviceLicense(strings[0]);
+                getDeviceLicenses(strings[0]);
                 break;
         }
         return "";

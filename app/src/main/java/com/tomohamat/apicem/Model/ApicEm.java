@@ -119,6 +119,65 @@ public class ApicEm implements TaskDelegate {
         return users;
     }
 
+    private void receiveAllDevicesLicenses() {
+        ArrayList<String> responses = restClient.getResponses();
+        Log.d(TAG, "receiveAllDevicesLicenses: " + responses.size());
+
+        try {
+            ArrayList<DeviceLicense> deviceLicenses = new ArrayList();
+
+            for (String response : responses) {
+                Log.d(TAG, "WATCH THIS: " + response);
+                JSONObject responseJson = new JSONObject(response);
+                JSONArray jsonArray = responseJson.getJSONArray("response");
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    DeviceLicense license = null;
+
+                    responseJson = (JSONObject) jsonArray.get(i);
+
+                    String id = "No ID";
+                    if (responseJson.has("id")) {
+                        id = responseJson.getString("id");
+                    }
+                    int index = -1;
+                    if (responseJson.has("licenseIndex")) {
+                        index = responseJson.getInt("licenseIndex");
+                    }
+                    String name = "No name";
+                    if (responseJson.has("name")) {
+                        name = responseJson.getString("name");
+                    }
+                    String storeName = "No storeName";
+                    if (responseJson.has("storeName")) {
+                        storeName = responseJson.getString("storeName");
+                    }
+                    String status = "No status";
+                    if (responseJson.has("status")) {
+                        status = responseJson.getString("status");
+                    }
+                    String description = "No description";
+                    if (responseJson.has("description")) {
+                        description = responseJson.getString("description");
+                    }
+                    String type = "No type";
+                    if (responseJson.has("type")) {
+                        type = responseJson.getString("type");
+                    }
+
+                    license = new DeviceLicense(name, description, type, status, index, storeName, id);
+                    deviceLicenses.add(license);
+                }
+            }
+            activity.showAllDevicesLicenses(deviceLicenses);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // reset request
+        resetRequest();
+    }
+
     private void receiveApicEmVersion() {
         String response = restClient.getResponse();
 
@@ -140,13 +199,34 @@ public class ApicEm implements TaskDelegate {
 
                 responseJson = (JSONObject) jsonArray.get(i);
 
-                String id = responseJson.getString("id");
-                int index = responseJson.getInt("licenseIndex");
-                String name = responseJson.getString("name");
-                String storeName = responseJson.getString("storeName");
-                String status = responseJson.getString("status");
-                String description = responseJson.getString("description");
-                String type = responseJson.getString("type");
+                String id = "No ID";
+                if (responseJson.has("id")) {
+                    id = responseJson.getString("id");
+                }
+                int index = -1;
+                if (responseJson.has("licenseIndex")) {
+                    index = responseJson.getInt("licenseIndex");
+                }
+                String name = "No name";
+                if (responseJson.has("name")) {
+                    name = responseJson.getString("name");
+                }
+                String storeName = "No storeName";
+                if (responseJson.has("storeName")) {
+                    storeName = responseJson.getString("storeName");
+                }
+                String status = "No status";
+                if (responseJson.has("status")) {
+                    status = responseJson.getString("status");
+                }
+                String description = "No description";
+                if (responseJson.has("description")) {
+                    description = responseJson.getString("description");
+                }
+                String type = "No type";
+                if (responseJson.has("type")) {
+                    type = responseJson.getString("type");
+                }
 
                 license = new DeviceLicense(name, description, type, status, index, storeName, id);
                 deviceLicenses.add(license);
@@ -489,6 +569,17 @@ public class ApicEm implements TaskDelegate {
     }
      */
 
+    public void requestAllDevicesLicenses(ArrayList<NetworkDevice> networkDevices) {
+        String[] strings = new String[networkDevices.size()];
+        for (int i = 0; i < strings.length; i++) {
+            strings[i] = networkDevices.get(i).getId();
+        }
+
+        restClient = new RestClient(this, getBaseUrlString(), username, password);
+        setRequestCode(RestClient.REQUEST_GET_ALL_DEVICES_LICENSES);
+        restClient.execute(strings);
+    }
+
     public void requestApicEmVersion() {
         restClient = new RestClient(this, getBaseUrlString(), username, password);
         setRequestCode(RestClient.REQUEST_APIC_EM_VERSION);
@@ -604,6 +695,10 @@ public class ApicEm implements TaskDelegate {
                 case RestClient.REQUEST_TEST_SETTINGS:
                     Log.d(TAG, "taskCompletionResult::REQUEST_TEST_SETTINGS: " + result);
                     activity.setSettingsValidity(RestClient.RESULT_OK == result);
+                    break;
+                case RestClient.REQUEST_GET_ALL_DEVICES_LICENSES:
+                    Log.d(TAG, "taskCompletionResult::REQUEST_GET_ALL_DEVICES_LICENSES: " + result);
+                    receiveAllDevicesLicenses();
                     break;
                 case RestClient.REQUEST_APIC_EM_VERSION:
                     Log.d(TAG, "taskCompletionResult::REQUEST_APIC_EM_VERSION: " + result);

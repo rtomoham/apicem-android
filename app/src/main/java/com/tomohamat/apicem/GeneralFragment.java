@@ -30,7 +30,7 @@ public class GeneralFragment extends MyAppFragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private Button mGetUsersButton, mGetNetworkDevicesButton, mRequestHostsButton, mRequestLegitReadsButton, mRequestTestButton;
+    private Button mGetUsersButton, mRequestAllDevicesLicensesButton, mGetNetworkDevicesButton, mRequestHostsButton, mRequestLegitReadsButton, mRequestTestButton;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -83,9 +83,14 @@ public class GeneralFragment extends MyAppFragment {
         mRequestHostsButton = (Button) rootView.findViewById(R.id.requestHostsButton);
         mRequestHostsButton.setOnClickListener(listener);
         buttons.add(mRequestHostsButton);
+
         mRequestLegitReadsButton = (Button) rootView.findViewById(R.id.requestLegitReadsButton);
         mRequestLegitReadsButton.setOnClickListener(listener);
         buttons.add(mRequestLegitReadsButton);
+
+        mRequestAllDevicesLicensesButton = (Button) rootView.findViewById(R.id.requestAllDevicesLicensesButton);
+        mRequestAllDevicesLicensesButton.setOnClickListener(listener);
+        buttons.add(mRequestAllDevicesLicensesButton);
 //        mRequestTestButton = (Button) rootView.findViewById(R.id.requestTestButton);
 //        mRequestTestButton.setOnClickListener(listener);
 

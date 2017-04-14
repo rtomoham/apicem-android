@@ -56,6 +56,16 @@ public class MyAppActivity extends AppCompatActivity {
     /**
      * Empty stub, to be implemented by child.
      *
+     * @param deviceLicenses
+     */
+    public void showAllDevicesLicenses(ArrayList<DeviceLicense> deviceLicenses) {
+        // Empty stub, to be implemented by child.
+        Log.d(TAG, "MyAppActivity.showAllDevicesLicenses::empty stub called");
+    }
+
+    /**
+     * Empty stub, to be implemented by child.
+     *
      * @param successString
      */
     public void showCliRunnerResult(String successString) {

@@ -7,13 +7,69 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <Button
-        android:id="@+id/requestUsersButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/button_get_users"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/requestHostsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_get_hosts"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <Button
+            android:id="@+id/requestUsersButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_get_users"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
+
+        <Button
+            android:id="@+id/requestLegitReadsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_get_legit_reads"
+            tools:layout_editor_absoluteX="0dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/requestAllDevicesLicensesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_get_all_devices_licenses"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <Button
+            android:id="@+id/future1Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_future1"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
+
+        <Button
+            android:id="@+id/future2Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_future2"
+            tools:layout_editor_absoluteX="0dp" />
+
+    </LinearLayout>
+
     <!--
         <Button
             android:id="@+id/requestNetworkDevicesButton"
@@ -22,19 +78,6 @@
             android:text="@string/button_get_network_devices"
             tools:layout_editor_absoluteX="0dp" />
     -->
-    <Button
-        android:id="@+id/requestHostsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_get_hosts"
-        tools:layout_editor_absoluteX="0dp" />
-
-    <Button
-        android:id="@+id/requestLegitReadsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_get_legit_reads"
-        tools:layout_editor_absoluteX="0dp" />
 
     <ScrollView
         android:layout_width="match_parent"

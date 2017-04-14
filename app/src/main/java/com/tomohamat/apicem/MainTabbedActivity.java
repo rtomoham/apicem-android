@@ -145,6 +145,16 @@ public class MainTabbedActivity extends MyAppActivity implements
                     startActivitySettings();
                 }
                 break;
+            case R.id.requestAllDevicesLicensesButton:
+                if (apicEm.isInitialized()) {
+                    mGeneralFragment.showPleaseWait();
+                    mGeneralFragment.showProgressDialog(true);
+                    apicEm.requestAllDevicesLicenses(networkDevices);
+                } else {
+                    Toast.makeText(getApplicationContext(), getString(R.string.apicem_not_initialized), Toast.LENGTH_SHORT).show();
+                    startActivitySettings();
+                }
+                break;
         }
     }
 
@@ -258,6 +268,7 @@ public class MainTabbedActivity extends MyAppActivity implements
     }
 
     public void setNetworkDevices(ArrayList<NetworkDevice> devices) {
+        this.networkDevices = devices;
         mSwitchFragment.setNetworkDevices(devices);
     }
 
@@ -275,6 +286,15 @@ public class MainTabbedActivity extends MyAppActivity implements
             Toast.makeText(getApplicationContext(), "Error in settings: " + apicEm.getError(), Toast.LENGTH_SHORT).show();
             startActivitySettings();
         }
+    }
+
+    public void showAllDevicesLicenses(ArrayList<DeviceLicense> deviceLicenses) {
+        mGeneralFragment.showProgressDialog(false);
+        String result = new String();
+        for (DeviceLicense deviceLicense : deviceLicenses) {
+            result += deviceLicense.toString();
+        }
+        mGeneralFragment.showResult(result);
     }
 
     public void showCliRunnerResult(String result) {
